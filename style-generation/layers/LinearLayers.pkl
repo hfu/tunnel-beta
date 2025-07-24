@@ -1,0 +1,175 @@
+/// Linear features (lines and boundaries)
+module style.layers.LinearLayers
+
+import "../config/Colors.pkl" as colors
+
+/// Contour lines (topographic)
+contourLine: Mapping = new {
+  ["id"] = "contourLine"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "contourLine"
+  ["paint"] = new {
+    ["line-color"] = colors.reference["contour"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 0.5,
+      14, 1
+    )
+    ["line-opacity"] = 1
+  }
+  ["metadata"] = new {
+    ["z-order"] = 4
+  }
+}
+
+/// Linear water features (rivers, streams)
+linearWaterFeature: Mapping = new {
+  ["id"] = "linearWaterFeature"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "linearWaterFeature"
+  ["paint"] = new {
+    ["line-color"] = colors.water["primary"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 1,
+      14, 3
+    )
+  }
+  ["metadata"] = new {
+    ["z-order"] = 22
+  }
+}
+
+/// Linear topographic features
+linearTopographicFeature: Mapping = new {
+  ["id"] = "linearTopographicFeature"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "linearTopographicFeature"
+  ["paint"] = new {
+    ["line-color"] = colors.nature["topographic"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 0.5,
+      14, 1.5
+    )
+    ["line-opacity"] = 0.7
+  }
+  ["metadata"] = new {
+    ["z-order"] = 23
+  }
+}
+
+/// Administrative boundaries
+administrativeBoundaryArea: Mapping = new {
+  ["id"] = "administrativeBoundaryArea"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "administrativeBoundaryArea"
+  ["paint"] = new {
+    ["line-color"] = colors.reference["administrative"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 1,
+      14, 3
+    )
+    ["line-dasharray"] = new { 3; 3 }
+    ["line-opacity"] = 0.8
+  }
+  ["metadata"] = new {
+    ["z-order"] = 24
+  }
+}
+
+/// Geographical names
+geographicalNames: Mapping = new {
+  ["id"] = "geographicalNames"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "geographicalNames"
+  ["paint"] = new {
+    ["line-color"] = colors.reference["geographical"]
+    ["line-width"] = 1
+    ["line-opacity"] = 0.6
+  }
+  ["metadata"] = new {
+    ["z-order"] = 25
+  }
+}
+
+/// Supplementary road lines
+supplementaryRoadLine: Mapping = new {
+  ["id"] = "supplementaryRoadLine"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "supplementaryRoadLine"
+  ["paint"] = new {
+    ["line-color"] = colors.transportation["supplementary"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 0.5,
+      14, 2
+    )
+    ["line-dasharray"] = new { 2; 2 }
+  }
+  ["metadata"] = new {
+    ["z-order"] = 26
+  }
+}
+
+/// Road center lines
+roadCenterLine: Mapping = new {
+  ["id"] = "roadCenterLine"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "roadCenterLine"
+  ["paint"] = new {
+    ["line-color"] = colors.transportation["roadCenterLineYellow"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 2), List("zoom"),
+      6, 1,
+      22, 96
+    )
+    ["line-opacity"] = 0.5
+  }
+  ["metadata"] = new {
+    ["z-order"] = 27
+  }
+}
+
+/// Structure lines
+structures_ln: Mapping = new {
+  ["id"] = "structures_ln"
+  ["type"] = "line"
+  ["source"] = "pmtiles"
+  ["source-layer"] = "structures_ln"
+  ["paint"] = new {
+    ["line-color"] = colors.infrastructure["structures"]
+    ["line-width"] = List(
+      "interpolate", List("exponential", 1), List("zoom"),
+      10, 1,
+      14, 2
+    )
+  }
+  ["metadata"] = new {
+    ["z-order"] = 28
+  }
+}
+
+/// All linear layers in render order（contourLineは個別エクスポート）
+linearLayers: List = List(
+  roadCenterLine,
+  linearWaterFeature,
+  linearTopographicFeature,
+  administrativeBoundaryArea,
+  geographicalNames,
+  supplementaryRoadLine,
+  structures_ln
+)
+
+/// Legacy alias
+all: List = linearLayers
+/// Export contourLine individually for custom ordering
+exportedContourLine: Mapping = contourLine

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>S_0604-374 Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0/dist/maplibre-gl.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .map-overlay h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .map-overlay p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .layer-toggle {
+            margin: 5px 0;
+        }
+        
+        .layer-toggle input {
+            margin-right: 8px;
+        }
+        
+        .layer-toggle label {
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .docs-link {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: #007cbf;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .docs-link:hover {
+            background: #005a8b;
+        }
+        
+        .maplibregl-popup .maplibregl-popup-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            max-width: 350px;
+        }
+        
+        .popup-content {
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .popup-content h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .popup-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .popup-content td {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+        
+        .popup-content td:first-child {
+            font-weight: bold;
+            color: #666;
+            width: 120px;
+        }
+        
+        .popup-content td:last-child {
+            color: #333;
+        }
+    </style>
+    <script src="https://unpkg.com/maplibre-gl@5.0.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // PMTiles protocol setup
+            let protocol = new pmtiles.Protocol();
+            maplibregl.addProtocol("pmtiles", protocol.tile);
+
+            // Initialize map
+            const map = new maplibregl.Map({
+                container: 'map',
+                style: 'style.json',
+                center: [125.537868, -8.559112], // Data center coordinates
+                zoom: 15.76,
+                hash: true
+            });
+
+            map.on('load', () => {
+                // Add PMTiles source
+                map.addSource('pmtiles-source', {
+                    type: 'vector',
+                    url: 'pmtiles://a.pmtiles'
+                });
+
+                // Layer visibility controls
+                const layerControls = {
+                    'toggle-buildings': ['building'],
+                    'toggle-roads': ['roadCenterLine', 'roadArea', 'supplementaryRoadLine'],
+                    'toggle-water': ['waterSurface', 'linearWaterFeature'],
+                    'toggle-contours': ['contourLine']
+                };
+
+                Object.keys(layerControls).forEach(controlId => {
+                    const checkbox = document.getElementById(controlId);
+                    checkbox.addEventListener('change', () => {
+                        layerControls[controlId].forEach(layerId => {
+                            const visibility = checkbox.checked ? 'visible' : 'none';
+                            if (map.getLayer(layerId)) {
+                                map.setLayoutProperty(layerId, 'visibility', visibility);
+                            }
+                        });
+                    });
+                });
+
+                // Feature popup functionality
+                const popup = new maplibregl.Popup({
+                    closeButton: false,
+                    closeOnClick: false
+                });
+
+                // Popup toggle state
+                let popupEnabled = true;
+                const popupToggle = document.getElementById('toggle-popup');
+                
+                popupToggle.addEventListener('change', () => {
+                    popupEnabled = popupToggle.checked;
+                    if (!popupEnabled) {
+                        popup.remove(); // Remove any existing popup
+                        map.getCanvas().style.cursor = ''; // Reset cursor
+                    }
+                });
+
+                // Get all interactive layer IDs
+                const interactiveLayers = [
+                    'building', 'roadCenterLine', 'roadArea', 'supplementaryRoadLine',
+                    'waterSurface', 'linearWaterFeature', 'contourLine', 'vegetation',
+                    'artificialCoverage', 'linearTopographicFeature', 'administrativeBoundaryArea',
+                    'geographicalNames', 'structures_ln', 'facility', 'structures_pt',
+                    'linearfacility', 'roadAreaattribute', 'pointTopographicFeature',
+                    'geodeticReference'
+                ];
+
+                // Mouse enter event - show popup on hover
+                interactiveLayers.forEach(layerId => {
+                    map.on('mouseenter', layerId, (e) => {
+                        if (!popupEnabled) return; // Skip if popup is disabled
+                        
+                        map.getCanvas().style.cursor = 'pointer';
+                        
+                        const feature = e.features[0];
+                        if (!feature) return;
+
+                        const coordinates = e.lngLat;
+                        const properties = feature.properties;
+                        
+                        // Create popup content
+                        let content = `<div class="popup-content">`;
+                        content += `<h4>${layerId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</h4>`;
+                        content += `<table>`;
+                        
+                        // Show key properties
+                        Object.entries(properties).forEach(([key, value]) => {
+                            if (value !== null && value !== undefined && value !== '') {
+                                // Truncate long values
+                                const displayValue = String(value).length > 50 
+                                    ? String(value).substring(0, 50) + '...' 
+                                    : String(value);
+                                content += `<tr><td>${key}:</td><td>${displayValue}</td></tr>`;
+                            }
+                        });
+                        
+                        content += `</table></div>`;
+
+                        popup.setLngLat(coordinates)
+                            .setHTML(content)
+                            .addTo(map);
+                    });
+
+                    // Mouse leave event - hide popup
+                    map.on('mouseleave', layerId, () => {
+                        if (!popupEnabled) return; // Skip if popup is disabled
+                        
+                        map.getCanvas().style.cursor = '';
+                        popup.remove();
+                    });
+                });
+
+                // Click event - show detailed popup
+                map.on('click', (e) => {
+                    if (!popupEnabled) return; // Skip if popup is disabled
+                    
+                    const features = map.queryRenderedFeatures(e.point);
+                    if (features.length === 0) return;
+
+                    const feature = features[0];
+                    const properties = feature.properties;
+                    
+                    let content = `<div class="popup-content">`;
+                    content += `<h4>📍 Feature Details</h4>`;
+                    content += `<table>`;
+                    content += `<tr><td>Layer:</td><td><strong>${feature.layer.id}</strong></td></tr>`;
+                    content += `<tr><td>Type:</td><td>${feature.geometry.type}</td></tr>`;
+                    
+                    // Show all properties
+                    Object.entries(properties).forEach(([key, value]) => {
+                        if (value !== null && value !== undefined && value !== '') {
+                            content += `<tr><td>${key}:</td><td>${String(value)}</td></tr>`;
+                        }
+                    });
+                    
+                    content += `</table></div>`;
+
+                    new maplibregl.Popup()
+                        .setLngLat(e.lngLat)
+                        .setHTML(content)
+                        .addTo(map);
+                });
+
+                console.log('Map loaded successfully with PMTiles source and popup functionality');
+            });
+
+            // Add navigation controls
+            map.addControl(new maplibregl.NavigationControl());
+            map.addControl(new maplibregl.ScaleControl({
+                position: 'bottom-right'
+            }));
+
+            // Add geolocation control
+            map.addControl(new maplibregl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true
+            }));
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="map-overlay">
+        <h3>🇹🇱 S_0604-374 Dataset</h3>
+        <p><strong>Data Format:</strong> PMTiles</p>
+        <p><strong>Number of Layers:</strong> 20</p>
+        <p><strong>Source:</strong> Esri File Geodatabase</p>
+        
+        <div style="margin-top: 15px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Layer Display</h4>
+            <div class="layer-toggle">
+                <input type="checkbox" id="toggle-buildings" checked>
+                <label for="toggle-buildings">Buildings</label>
+            </div>
+            <div class="layer-toggle">
+                <input type="checkbox" id="toggle-roads" checked>
+                <label for="toggle-roads">Roads</label>
+            </div>
+            <div class="layer-toggle">
+                <input type="checkbox" id="toggle-water" checked>
+                <label for="toggle-water">Water</label>
+            </div>
+            <div class="layer-toggle">
+                <input type="checkbox" id="toggle-contours" checked>
+                <label for="toggle-contours">Contours</label>
+            </div>
+            
+            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
+                <h4 style="margin: 0 0 8px 0; font-size: 14px;">Feature Info</h4>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="toggle-popup" checked>
+                    <label for="toggle-popup">Show feature details on hover/click</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <a href="docs/" class="docs-link">📖 Documentation</a>
+    <a href="https://github.com/cndg-dgot/experimental-dili-beta" class="docs-link" style="bottom: 60px;">🔗 GitHub Repository</a>
+</body>
+</html>
