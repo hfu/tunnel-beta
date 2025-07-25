@@ -52,29 +52,6 @@ structuresPointLayer: Mapping = new {
   }
 }
 
-/// Linear facility connection points
-linearFacilityLayer: Mapping = new {
-  ["id"] = "linearfacility"
-  ["type"] = "circle"
-  ["source"] = "pmtiles"
-  ["source-layer"] = "linearfacility"
-  ["layout"] = new {
-    ["visibility"] = "visible"
-  }
-  ["paint"] = new {
-    ["circle-radius"] = List(
-      "interpolate", List("exponential", 1), List("zoom"),
-      14, 2,
-      18, 3,
-      22, 4
-    )
-    ["circle-color"] = Colors.facilityColor
-    ["circle-stroke-width"] = 1
-    ["circle-stroke-color"] = Colors.infrastructureColor
-    ["circle-opacity"] = 0.7
-  }
-}
-
 /// Road area attribute points
 roadAreaAttributeLayer: Mapping = new {
   ["id"] = "roadAreaattribute"
@@ -149,7 +126,6 @@ pointLayers: List = List(
   geodeticReferenceLayer,
   pointTopographicFeatureLayer,
   roadAreaAttributeLayer,
-  linearFacilityLayer,
   structuresPointLayer,
   facilityLayer
 )

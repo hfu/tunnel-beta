@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.map-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.map-overlay h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.map-overlay p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.layer-toggle {
+    margin: 5px 0;
+}
+
+.layer-toggle input {
+    margin-right: 8px;
+}
+
+.layer-toggle label {
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.docs-link {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #007cbf;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.docs-link:hover {
+    background: #005a8b;
+}
+
+.maplibregl-popup .maplibregl-popup-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-width: 350px;
+}
+
+.popup-content {
+    font-family: 'Arial', sans-serif;
+}
+
+.popup-content h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.popup-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.popup-content td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+
+.popup-content td:first-child {
+    font-weight: bold;
+    color: #666;
+    width: 120px;
+}
+
+.popup-content td:last-child {
+    color: #333;
+}

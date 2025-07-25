@@ -83,22 +83,6 @@ administrativeBoundaryArea: Mapping = new {
   }
 }
 
-/// Geographical names
-geographicalNames: Mapping = new {
-  ["id"] = "geographicalNames"
-  ["type"] = "line"
-  ["source"] = "pmtiles"
-  ["source-layer"] = "geographicalNames"
-  ["paint"] = new {
-    ["line-color"] = colors.reference["geographical"]
-    ["line-width"] = 1
-    ["line-opacity"] = 0.6
-  }
-  ["metadata"] = new {
-    ["z-order"] = 25
-  }
-}
-
 /// Supplementary road lines
 supplementaryRoadLine: Mapping = new {
   ["id"] = "supplementaryRoadLine"
@@ -164,7 +148,6 @@ linearLayers: List = List(
   linearWaterFeature,
   linearTopographicFeature,
   administrativeBoundaryArea,
-  geographicalNames,
   supplementaryRoadLine,
   structures_ln
 )

@@ -230,20 +230,6 @@
       }
     },
     {
-      "id": "geographicalNames",
-      "type": "line",
-      "source": "pmtiles",
-      "source-layer": "geographicalNames",
-      "paint": {
-        "line-color": "#4169E1",
-        "line-width": 1,
-        "line-opacity": 0.6
-      },
-      "metadata": {
-        "z-order": 25
-      }
-    },
-    {
       "id": "supplementaryRoadLine",
       "type": "line",
       "source": "pmtiles",
@@ -390,37 +376,6 @@
         "circle-stroke-width": 0.5,
         "circle-stroke-color": "#616161",
         "circle-opacity": 0.8
-      }
-    },
-    {
-      "id": "linearfacility",
-      "type": "circle",
-      "source": "pmtiles",
-      "source-layer": "linearfacility",
-      "layout": {
-        "visibility": "visible"
-      },
-      "paint": {
-        "circle-radius": [
-          "interpolate",
-          [
-            "exponential",
-            1
-          ],
-          [
-            "zoom"
-          ],
-          14,
-          2,
-          18,
-          3,
-          22,
-          4
-        ],
-        "circle-color": "#ff9500",
-        "circle-stroke-width": 1,
-        "circle-stroke-color": "#666666",
-        "circle-opacity": 0.7
       }
     },
     {

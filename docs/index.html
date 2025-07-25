@@ -5,122 +5,11 @@
     <title>S_0604-374 Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0/dist/maplibre-gl.css" />
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100%;
-        }
-        
-        .map-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-width: 300px;
-        }
-        
-        .map-overlay h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 16px;
-        }
-        
-        .map-overlay p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .layer-toggle {
-            margin: 5px 0;
-        }
-        
-        .layer-toggle input {
-            margin-right: 8px;
-        }
-        
-        .layer-toggle label {
-            font-size: 13px;
-            cursor: pointer;
-        }
-        
-        .docs-link {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: #007cbf;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            z-index: 1000;
-        }
-        
-        .docs-link:hover {
-            background: #005a8b;
-        }
-        
-        .maplibregl-popup .maplibregl-popup-content {
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            max-width: 350px;
-        }
-        
-        .popup-content {
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .popup-content h4 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 16px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        
-        .popup-content table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        
-        .popup-content td {
-            padding: 4px 8px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: top;
-        }
-        
-        .popup-content td:first-child {
-            font-weight: bold;
-            color: #666;
-            width: 120px;
-        }
-        
-        .popup-content td:last-child {
-            color: #333;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/maplibre-gl@5.0.0/dist/maplibre-gl.js"></script>
     <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // PMTiles protocol setup
-            let protocol = new pmtiles.Protocol();
-            maplibregl.addProtocol("pmtiles", protocol.tile);
-
             // Initialize map
             const map = new maplibregl.Map({
                 container: 'map',
@@ -131,12 +20,6 @@
             });
 
             map.on('load', () => {
-                // Add PMTiles source
-                map.addSource('pmtiles-source', {
-                    type: 'vector',
-                    url: 'pmtiles://a.pmtiles'
-                });
-
                 // Layer visibility controls
                 const layerControls = {
                     'toggle-buildings': ['building'],
@@ -261,7 +144,7 @@
                         .addTo(map);
                 });
 
-                console.log('Map loaded successfully with PMTiles source and popup functionality');
+                console.log('Map loaded successfully with popup functionality');
             });
 
             // Add navigation controls
@@ -282,43 +165,14 @@
 </head>
 <body>
     <div id="map"></div>
-    
+
     <div class="map-overlay">
         <h3>🇹🇱 S_0604-374 Dataset</h3>
         <p><strong>Data Format:</strong> PMTiles</p>
-        <p><strong>Number of Layers:</strong> 20</p>
         <p><strong>Source:</strong> Esri File Geodatabase</p>
-        
-        <div style="margin-top: 15px;">
-            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Layer Display</h4>
-            <div class="layer-toggle">
-                <input type="checkbox" id="toggle-buildings" checked>
-                <label for="toggle-buildings">Buildings</label>
-            </div>
-            <div class="layer-toggle">
-                <input type="checkbox" id="toggle-roads" checked>
-                <label for="toggle-roads">Roads</label>
-            </div>
-            <div class="layer-toggle">
-                <input type="checkbox" id="toggle-water" checked>
-                <label for="toggle-water">Water</label>
-            </div>
-            <div class="layer-toggle">
-                <input type="checkbox" id="toggle-contours" checked>
-                <label for="toggle-contours">Contours</label>
-            </div>
-            
-            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
-                <h4 style="margin: 0 0 8px 0; font-size: 14px;">Feature Info</h4>
-                <div class="layer-toggle">
-                    <input type="checkbox" id="toggle-popup" checked>
-                    <label for="toggle-popup">Show feature details on hover/click</label>
-                </div>
-            </div>
-        </div>
     </div>
-    
+
     <a href="docs/" class="docs-link">📖 Documentation</a>
-    <a href="https://github.com/cndg-dgot/experimental-dili-beta" class="docs-link" style="bottom: 60px;">🔗 GitHub Repository</a>
+    <a href="https://github.com/cndg-dgot/experimental-dili-beta" class="docs-link">🔗 GitHub Repository</a>
 </body>
 </html>
