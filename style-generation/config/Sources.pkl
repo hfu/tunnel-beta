@@ -10,7 +10,7 @@ openmaptiles: Mapping<String, Any> = new {
 /// PMTiles source containing our converted data
 pmtilesSource: Mapping<String, Any> = new {
   ["type"] = "vector"
-  ["url"] = "https://tunnel.optgeo.org/a"
+  ["url"] = "https://tunnel.optgeo.org/experimental-dili-beta"
 }
 
 /// All sources combined
