@@ -10,7 +10,7 @@
   "sources": {
     "pmtiles": {
       "type": "vector",
-      "url": "https://tunnel.optgeo.org/experimental-dili-beta"
+      "url": "https://tunnel.optgeo.org/martin/experimental-dili-beta"
     }
   },
   "sprite": "https://demotiles.maplibre.org/styles/osm-bright-gl-style/sprite",

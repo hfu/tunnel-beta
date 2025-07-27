@@ -4,7 +4,7 @@
   "sources": {
     "projectBuildings": {
       "type": "vector",
-      "url": "pmtiles://https://cndg-dgot.github.io/experimental-dili-beta/a.pmtiles"
+      "url": "pmtiles://a.pmtiles"
     },
     "osmBuildings": {
       "type": "vector",
